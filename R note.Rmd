@@ -1,0 +1,722 @@
+---
+title: "統繪R筆記整理"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# H24074035 統計111 李瑞庭
+## basic
+
+### calculator
+
+-相加(+), 相乘(*), 相除(/)  
+-let a/b = c + d, c is a quotient and d is a remainder.
+  we denote :
+  
+    c = a %/% b
+    d = a %% b
+    
+### express a sequence
+
+normal sequence : use "a:b", "seq(a,b)"  
+others:
+```{r}
+seq(1,10,2)  
+seq(1,10, by = 2)  
+seq(1,10, length.out = 6)
+
+```
+
+### special values in R
+
+notation | meaning
+---|---
+NA | missing value
+NaN | 0/0
+Inf | 2/0
+```{r}
+Inf+NaN ; Inf+NA ; NaN+NA ; Inf+Inf+10
+```
+
+### approximated  values
+
+```{r}
+round(123.98765)  
+round(123.98765, digits = 3)  
+round(123.98765, digits = -2)
+```
+
+note : round 代表去掉小數的部分且進位，digits為設定進位的位數  
+
+```{r}
+signif(1928373, digits = 2)  
+signif(1928373, digits = 5)
+signif(1928.373, digits = 2)
+```
+
+note : signif 為去掉小數的部分且進位，digits為設定捨掉的位數  
+
+### other  mathematical  functions
+```{r}
+abs(-2)  
+sqrt(25)  
+ceiling(4.87); ceiling(4.23)  
+floor(2.7); floor(2.1)  
+trunc(9.344); trunc(9.123)  
+cos(30); acos(30); cosh(30); acosh(30)  
+log(10, base = 10); log10(10)  
+exp(10)
+```
+
+note : function of cot(x), acot(x) needs to install pracma  
+
+### descriptive statistics  
+
+```{r}
+x <- c(1:25, NA)
+mean(x); mean(x, na.rm = T)  
+var(x); var(x, na.rm = T)  
+median(x); median(x, na.rm = T)  
+#quantile(x, 0.5)-> Error in quantile.default(x, 0.5): missing values and NaN's  
+quantile(x, 0.5, na.rm = T)  
+summary(x)  
+par(mfrow = c(1,2))
+boxplot(x)
+hist(x)
+```
+
+note : na.rm means remove NAs from the sequence.  
+
+### take a look at your workspace
+
+```{r}
+objects()  
+ls()  
+```
+
+if you want to delete x and y from object, type  
+
+"rm(x, y)"  
+
+after doing this, you can retype "object()" to check.  
+
+## vectors
+
+### basic
+```{r}
+#create
+vt1 <- c(1:5); vt2 <- c(2,4)  
+#combine
+vt3 <- c(vt1, vt2)
+#instead of typing "vt2<-c(vt2,vt1)", "vt3<-c(vt2, vt1)" is a safer way.  
+
+#check how many elements in the vector  
+length(vt1)
+#select the locations in the vector  
+vt1[1]; vt1[c(1,3,4)]  
+#remove the third location of the vector  
+vt1[-3]
+#or remove not just one location  
+vt1[-c(2:4)]  
+```
+
+### vector arithmetic
+
+```{r}
+x<-c(3,6,9)  
+x*3; x-3; x^3  
+y1<-c(3,2); y2<-c(3,2,4)  
+
+#deffrient length
+x^y1  
+x^y2  
+
+#when the vectors are different lengths, the shorter one is extended by recycling.
+c(1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10) %% 2:3  
+c(1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10) %% rep(2:3, 10)  
+
+#assign values into a vector
+vtx<- rep(NA, 6)
+vtx[2]<-5
+vtx[c(4:6)] <- rep(1, 3)
+vtx
+
+#to delete NA
+vtx[-c(1,3)]
+vtxnew <- vtx[-c(1,3)]
+vtxnew
+```
+
+## matrix
+
+construct a matrix  
+```{r}
+a <- 1:5; b <- 6:10; c <- 11:15; d <- 16:20
+#1
+matr1 <- rbind(a,b,c,d)
+matr1
+dim(matr1)
+#2
+matr2 <- cbind(a,b,c,d)
+matr2
+dim(matr2)
+#3
+#note the ordering
+x <- 1:6
+matrix(x, nrow = 2, ncol = 3)
+matrix(x, nrow = 2, ncol = 3, byrow = TRUE)
+#note the index
+xnew<-matrix(x, nrow = 2, ncol = 3, byrow = TRUE)
+xnew
+xnew[2]; xnew[5]
+
+#we can change the column or row names by : 
+colnames(matr1); rownames(matr1); dimnames(matr1);  
+colnames(matr1) <- c("V1","V2","V3","V4","V5")
+matr1
+```
+
+指定矩陣內元素
+```{r}
+m<-1:12
+matrix(m, ncol = 3, nrow = 4)  
+```
+
+```{r}
+mat<-matrix(m, ncol = 3, nrow = 4)
+mat[2,1];   
+mat[c(2,3), 2]; mat[c(1:2), c(2,3)];  
+mat[, 3]; mat[c(1:2), ]
+```
+
+to view the summary of each column or each row
+
+```{r}
+c<-matrix(1:9,3,3)
+colSums(c)
+rowSums(c)
+colMeans(c)
+rowMeans(c)
+```
+
+transpose
+```{r}
+t(c)
+```
+diagonal matrix
+```{r}
+diag(c)
+```
+determinant of a matrix
+```{r}
+det(c)
+```
+find the inverse 
+
+solve(c)
+->Error in solve.default(c) : Lapack routine dgesv : system is exactly singular : U[3,3] = 0
+
+the matrix c do not have an inverse since det(c) = 0  
+
+eigen system
+```{r}
+B <- matrix(c(5:8), 2, 2)
+eigen(B)
+
+D <- matrix(rnorm(9), 3, 3) 
+eig.D <- eigen(D) 
+eig.D$values
+```
+
+## for loop
+
+random number generator
+```{r}
+x0 <- 3; a <- 5; c <- 7; m <- 501 
+X <- rep(NA, 11)
+X[1] <- x0
+for(j in 1:10){
+  X[j + 1] <- (a*X[j] + c) %% m 
+  }
+X[2:11]
+```
+
+## if() statement
+
+Count the number of each class  
+```{r}
+basket <- c("r", "b", "y", "y", "y", "r", "r", "b") 
+n.r <- 0; n.b <- 0; n.y <- 0
+for(i in 1:length(basket)){
+  if(basket[i] == "r"){ n.r <- n.r + 1
+  }else if(basket[i] == "b"){ 
+    n.b <- n.b + 1
+  }else{
+  n.y <- n.y + 1
+  } 
+}
+c(n.r, n.b, n.y)
+```
+
+## while() loop
+
+the following is an example applying for loop
+```{r}
+for(j in 1:8){ 
+  print(j)
+}
+```
+compare to the above example, the following is an example applying while loop.  
+the while loop needs the initial, condition of stopping, and iteration or replacement.
+
+```{r}
+j <- 1
+while(j <= 8){
+  print(j)
+  j <- j + 1 
+}
+```
+
+Fibonacci numbers  
+1. using while loop  
+```{r}
+Fib1 <- 1
+Fib2 <- 1
+Fibonacci <- c(Fib1) 
+while (Fib2 < 100) {
+  Fibonacci <- c(Fibonacci, Fib2)
+  Fib1 <- Fibonacci[length(Fibonacci) - 1] 
+  Fib2 <- Fib1 + Fibonacci[length(Fibonacci)]
+} 
+Fibonacci
+```
+
+2.using "break"  
+
+```{r}
+Fib1 <- 1
+Fib2 <- 1
+Fibonacci <- c(Fib1) 
+for(j in 1:1000){
+  if(Fib2 < 100){
+    Fibonacci <- c(Fibonacci, Fib2)
+    Fib1 <- Fibonacci[length(Fibonacci) - 1] 
+    Fib2 <- Fib1 + Fibonacci[length(Fibonacci)]
+}else{
+  break
+  } 
+}
+Fibonacci
+```
+
+3.using "repeat" and "break"  
+
+```{r}
+Fib1 <- 1
+Fib2 <- 1
+Fibonacci <- c(Fib1) 
+repeat
+{
+  if(Fib2 < 100){
+    Fibonacci <- c(Fibonacci, Fib2)
+    Fib1 <- Fibonacci[length(Fibonacci) - 1] 
+    Fib2 <- Fib1 + Fibonacci[length(Fibonacci)]
+  }else{ 
+    break
+  } 
+}
+Fibonacci
+```
+
+4. using "repeat{}" and "break"  
+
+```{r}
+Fib1 <- 1
+Fib2 <- 1
+Fibonacci <- c(Fib1) 
+repeat
+{
+  if(Fib2 >= 100) break
+    Fibonacci <- c(Fibonacci, Fib2)
+    Fib1 <- Fibonacci[length(Fibonacci) - 1] 
+    Fib2 <- Fib1 + Fibonacci[length(Fibonacci)]
+} 
+Fibonacci
+```
+
+5. using "repeat{}" and "next"  
+
+```{r}
+Fib1 <- 1
+Fib2 <- 1
+Fibonacci <- c(Fib1) 
+for(j in 1:100){
+  if(Fib2 >= 100) next
+    Fibonacci <- c(Fibonacci, Fib2)
+    Fib1 <- Fibonacci[length(Fibonacci) - 1] 
+    Fib2 <- Fib1 + Fibonacci[length(Fibonacci)] 
+#print(j)
+} 
+Fibonacci
+```
+
+### print()
+
+```{r}
+k <- 1
+while(k < 100){
+  fac <- c() 
+  for(j in 1:k){
+    if((k %% j) == 0) fac <- c(fac, j) 
+  }
+  if(k == sum(fac[-length(fac)])){
+    out <- paste(paste(k, "=", sep=" "),
+                 paste(fac[-length(fac)], collapse = " + "), sep = " ")
+    print(out) 
+  }
+  k <- k+1 
+}
+```
+
+### cat()
+
+```{r}
+k <- 1
+while(k < 100){
+  fac <- c() 
+  for(j in 1:k){
+    if((k %% j) == 0){ 
+      fac <- c(fac, j)
+    } 
+  }
+  if(k == sum(fac[-length(fac)])){ 
+    cat(paste(k, "=", sep=" "),
+        paste(fac[-length(fac)], collapse = " + "), "\n")
+    }
+  k <- k+1 
+}
+```
+
+### function
+if we want a function like this :   
+f(x)=3x+2, x=2,3,4.
+we can represent it by :
+```{r}
+ f <- function(x){ 
+   3*x + 2
+}
+f(2); f(3); f(4)
+```
+
+another example  
+```{r}
+f <- function(x){ 
+  res <- 3*x + 2
+}
+f(2) 
+```
+
+-> return nothing, so we add :  
+
+```{r}
+f <- function(x){ 
+  res <- 3*x + 2
+}
+f(2) 
+a<- f(2); a
+```
+
+
+
+or a better way, by using "return()"  
+
+```{r}
+ f <- function(x){ 
+   return(3*x + 2)
+} 
+f(2)
+```
+
+example : perfect number  
+```{r}
+perfect.number <- function(a, b){ 
+  k <- a
+  res <- c() 
+  while(k < b){
+    fac <- c() 
+    for(j in 1:k){
+      if((k %% j) == 0) fac <- c(fac, j) 
+    }
+    if(k == sum(fac[-length(fac)])) { 
+      res <- c(res, k)}
+      k <- k+1
+  }
+  return(res) 
+}
+perfect.number(10, 10000)
+```
+
+### list()
+
+a collection of multiple types of objects, like vectors, characteristics, numbers, lists,...  
+
+```{r}
+X <- list(a = 3, b = c(1,2,3,4,5), c = c("A", "B")) 
+X
+```
+
+### $ or [[]]
+
+$ : the name of the element.  
+[[]] : the location or the name of the element.  
+
+```{r}
+ X <- list(a = 3, b = c(1,2,3,4,5), c = c("A", "B")) 
+X$a; X[[2]]; X[["c"]]
+```
+
+use function and list  
+```{r}
+perfect.number <- function(a, b){ 
+  k <- a
+  res <- c() 
+  ans <- list() 
+  while(k < b){
+    fac <- c() 
+    for(j in 1:k){
+      if((k %% j) == 0) fac <- c(fac, j) 
+    }
+    if(k == sum(fac[-length(fac)])) {
+      res <- c(res, k)
+      ans[[paste(k)]] <- fac[-length(fac)]
+  }
+k <- k+1
+}
+ans$number <- res 
+return(ans)
+}
+Ans<- perfect.number(1,100)
+Ans
+```
+
+partially shown multiple output  
+
+use "invisible()" to hide some output  
+
+```{r}
+perfect.number <- function(a, b){ 
+  k <- a
+  res <- c() 
+  ans <- list() 
+  while(k < b){
+    fac <- c() 
+    for(j in 1:k){
+      if((k %% j) == 0) fac <- c(fac, j) 
+    }
+    if(k == sum(fac[-length(fac)])) {
+      res <- c(res, k)
+      ans[[paste(k)]] <- fac[-length(fac)]
+    }
+      k <- k+1
+}
+print(res)
+ans$number <- res 
+return(invisible(ans))
+ }
+Ans <- perfect.number(1, 100)
+Ans
+length(Ans)
+```
+
+## data frame
+
+Most data sets are stored in R as data frames.  
+
+These are like matrices, but with the columns having their own names.  
+
+Columns can be of different types from each other.  
+
+an example of matrix :  
+```{r}
+X <- matrix(NA, 3, 3)
+X[,1] <- c("red", "yellow", "blue")
+X[,2] <- c(1, 2, 3)
+X[,3] <- c(4, 5, 6)
+colnames(X) <- c("colors", "numbers", "more.numbers") 
+X
+```
+
+use data frame :  
+
+```{r}
+colors <- c("red", "yellow", "blue")
+numbers <- c(1, 2, 3)
+colors.and.numbers<-data.frame(colors,numbers,more.numbers = c(4, 5, 6))
+colors.and.numbers
+```
+
+
+## graphics
+
+an example of graphices : 
+
+```{r}
+#graph1
+par(mfrow=c(2,2))
+k<-c(0:10)
+plot(k,dbinom(k,size = 10,prob = .2),ylim=c(0.0,0.4), type = "h", xlab = "x",ylab = "pdf", col = "red", lty =2 )
+par(new=TRUE)
+plot(k,dbinom(k,size = 10, prob = .5),ylim=c(0.0,0.4),type = "h",xlab = "x",ylab = "pdf",col = "blue", lty = 4)
+legend("topright", c("p = 0.7", "p = 0.5", "p = 0.2"),
+       col = c("black", "blue", "red"), lty = c(1,4,2) ,pch = c(19,8,17))
+par(new=TRUE)
+plot(k,dbinom(k,size = 10, prob = .7),ylim=c(0.0,0.4),type = "h",xlab = "x",ylab = "pdf", col = "black", lty = 1)
+par(new = TRUE)
+plot(k,dbinom(k,size = 10,prob = .2),ylim=c(0.0,0.4), type = "p", xlab = "x",ylab = "pdf", col = "red", lty =2 , pch = 17)
+par(new=TRUE)
+plot(k,dbinom(k,size = 10, prob = .5),ylim=c(0.0,0.4),type = "p",xlab = "x",ylab = "pdf",col = "blue", lty = 4, pch = 8)
+par(new=TRUE)
+plot(k,dbinom(k,size = 10, prob = .7),ylim=c(0.0,0.4),type = "p",xlab = "x",ylab = "pdf", col = "black", lty = 1, pch = 19)
+title("binomial(n,p) with n = 10")
+
+#graph2
+
+curve(dgamma(x,1,3), 0, 5,ylim=c(0.0,3.0),lty=1,col="black",main=expression(paste("Gamma(",alpha,",", lambda,") with ",lambda," = 3")),ylab="pdf")
+curve(dgamma(x,2,3), 0, 5,ylim=c(0.0,3.0),lty=2,col="red", add = TRUE)
+curve(dgamma(x,3,3), 0, 5,ylim=c(0.0,3.0),lty=4,col="blue", add = TRUE)
+curve(dgamma(x,5,3), 0, 5,ylim=c(0.0,3.0),lty=5,col="gray", add = TRUE)
+legend("topright", c(expression(paste(alpha, " = 1")),expression(paste(alpha, " = 2")),expression(paste(alpha, " = 3")),expression(paste(alpha, " = 5"))),col = c("black","red","blue","gray"),text.col = c(1,1,1,1),lty = c(1,2,4,5))
+
+#graph3
+curve(dnorm(x, 5, sd = 1),0,20 ,col = "black", lty = 1, main = expression(paste("N(",mu,",",sigma^2,") with ",sigma^2," = 1")),ylab = "pdf")
+curve(dnorm(x, 10, sd = 1),0,20, col = "red", lty = 2, add = TRUE)
+curve(dnorm(x, 12, sd = 1),0,20, col = "blue", lty = 4, add = TRUE)
+curve(dnorm(x, 14, sd = 1),0,20, col = "gray", lty = 5, add = TRUE)
+legend("topright", c(expression(paste(sigma, " = 0.5")),expression(paste(sigma, " = 1")),expression(paste(sigma, " = 2")),expression(paste(sigma, " = 3"))),col = c("black","red","blue","gray"),text.col = c(1,1,1,1),lty = c(1,2,4,5))
+
+#graph4
+curve(dnorm(x, 0, sd = 0.5),-9,9 ,col = "black", lty = 1, main = expression(paste("N(",mu,",",sigma^2,") with ",mu," = 0")),ylab = "pdf")
+curve(dnorm(x, 0, sd = 1),-9,9, col = "red", lty = 2, add = TRUE)
+curve(dnorm(x, 0, sd = 2),-9,9, col = "blue", lty = 4, add = TRUE)
+curve(dnorm(x, 0, sd = 3),-9,9, col = "gray", lty = 5, add = TRUE)
+legend("topright", c(expression(paste(sigma, " = 0.5")),expression(paste(sigma, " = 1")),expression(paste(sigma, " = 2")),expression(paste(sigma, " = 3"))),col = c("black","red","blue","gray"),text.col = c(1,1,1,1),lty = c(1,2,4,5))
+```
+
+### R markdown  
+
+#### introduce R Markdown  
+
+Compile a single R Markdown document to a report in different formats, such as PDF, HTML, or Word.  
+
+Create notebooks in which you can directly run code chunks interactively.  
+
+Make slides for presentations (HTML5, LaTeX Beamer, or PowerPoint).  
+
+##### you have to "install.packages("rmarkdown")" first  
+
+-> start from creating a new file .Rmd  
+
+##### basic editings
+
+*italics* and _italics_ 
+**bold** and __bold__ 
+superscript^2^ 
+~~strikethrough~~
+
+##### headers of a paragraph :  
+
+# Header 1
+## Header 2
+### Header 3
+#### Header 4
+##### Header 5
+###### Header 6
+
+##### equations  
+
+
+$A = \pi*r^{2}$  
+
+
+center an equation :  
+
+$$B = 2 \pi r$$
+
+##### bullet point  
+
+* unordered list * item 2
++ sub-item 1
+1. ordered list
+2. item 2
++ sub-item 1
+
+##### table
+
+Table Header | Second Header 
+------------- | ------------- 
+Table Cell | Cell 2
+Cell 3 | Cell 4
+
+
+##### another table  
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{c|cc}
+      \hline
+      $x_j$ & 0 & 1 \\ 
+      \hline
+      $p_j$ & 0.3 & 0.7 \\ 
+      \hline
+    \end{tabular}
+    \caption{Random variable $X$ with its probability} \end{table}
+    
+##### matrix  
+
+$\left[ 
+    \begin{array}{cc}
+      A & B \\
+      C & D \\ 
+    \end{array}
+  \right]$
+  
+##### inline r codes  
+
+`r 2 * 3`
+
+##### showing an existed figure  
+
+```{r}
+#<center> 
+#![EDA](EDA_Graphics.png){width=50%} 
+#<center>
+```
+
+### apply family  
+
+#### apply(...)
+
+##### apply(X, MARGIN, FUN, . . . ) 
+Returns a vector or array or list of values obtained by applying a function to margins of an array or a matrix.
+
+* X: array or matrix (or a data frame) *
+* MARGIN: for a matrix 1 indicates rows, 2 indicates  columns  *
+* FUN: name of a function *  
+
+#### lapply(...)
+
+##### lapply(X, FUN, . . . )
+
+Returns a list of the same length as X, each element of which is the result of applying FUN to the corresponding element of X.
+* X: vector or data frame or list *  
+* FUN: name of a function *
+
+#### sapply(...) 
+##### sapply(X, FUN, . . . , simplify = TRUE)  
+Similarlly to lapply(X, Fun, . . . ) if sapply(x, f, simplify = FALSE, USE.NAMES = FALSE)
+
+* X: vector or data frame or list* 
+* FUN: name of a function *  
+* simplify: logical; TRUE will return an array or a matrix with the same length of output *
